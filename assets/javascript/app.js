@@ -1,15 +1,17 @@
 // Your web app's Firebase configuration
 var firebaseConfig = {
-    apiKey: "AIzaSyAv-gQAsrvqsR4TJYS7rMFZbYb_gzrSdqk",
-    authDomain: "fir-intro-81eaf.firebaseapp.com",
-    databaseURL: "https://fir-intro-81eaf.firebaseio.com",
-    projectId: "fir-intro-81eaf",
+    apiKey: "AIzaSyCsldtHwaBA2oilsHADtkpgD0ngferxXkY",
+    authDomain: "train-schedule-840bf.firebaseapp.com",
+    databaseURL: "https://train-schedule-840bf.firebaseio.com/",
+    projectId: "train-schedule-840bf",
     storageBucket: "",
-    messagingSenderId: "641109107416",
-    appId: "1:641109107416:web:c7cf52dd80084057"
-};
-// Initialize Firebase
-firebase.initializeApp(firebaseConfig);
+    messagingSenderId: "258461138286",
+    appId: "1:258461138286:web:1e797cffa15bdc7a"
+  };
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
 
 // Create a variable to reference the database.
 var database = firebase.database();
+
+ 
