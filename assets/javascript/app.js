@@ -14,4 +14,16 @@ var firebaseConfig = {
 // Create a variable to reference the database.
 var database = firebase.database();
 
- 
+ //Submit button on click
+  //cancel default behavior so that page doesn't reset
+
+  //grab values from each of the input fields
+
+    //Make vars for train name, destination, and frequency
+
+    //Use moment.js to calcuate train's next arrival and minutes away
+    //make vars for these values
+
+    //set all 5 of these vars in firebase
+
+  //print all train schedule table data using firebase
