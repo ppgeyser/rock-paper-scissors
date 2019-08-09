@@ -7,44 +7,40 @@ $(document).ready(function () {
     databaseURL: "https://train-schedule-840bf.firebaseio.com",
     projectId: "train-schedule-840bf",
     storageBucket: "",
-    messagingSenderId: "258461138286",
-    appId: "1:258461138286:web:1e797cffa15bdc7a"
   };
   // Initialize Firebase
   firebase.initializeApp(firebaseConfig);
-  
+
   // Create a variable to reference the database.
   var database = firebase.database();
-  
+
   var name = "";
   var destination = "";
   var frequency = 0;
-  var nextArrival = "";
-  var minsAway = 0;
   var firstTrainTime = "";
-  
-  
+  var minsAway = 0;
+  var nextArrival = "";
+
   //Submit button on click
   $("#submit").on("click", function () {
-  
+
     console.log("I've been clicked!");
-    
+
     // grab values from each of the input fields
     name = $("#trainName").val().trim();
     destination = $("#trainDestination").val().trim();
     frequency = $("#trainFrequency").val().trim();
-  
     firstTrainTime = $("#trainTime").val().trim();
-  
+
     console.log(name);
     console.log(destination);
     console.log(frequency);
     console.log(firstTrainTime);
-  
+
     //Use moment.js to calcuate train's next arrival and minutes away
-    
+
     // First Time Converted to MomentJS
-    var firstTrainMomentJS = moment(firstTrainTime, "HH:mm")
+    var firstTrainMomentJS = moment(firstTrainTime, "HH:mm").subtract(1, "years");
     console.log(firstTrainMomentJS);
 
     // Current Time
@@ -67,7 +63,6 @@ $(document).ready(function () {
     nextArrival = moment().add(minsAway, "minutes");
     nextArrival = moment(nextArrival).format("h:mm a")
     console.log("Next arrival: " + nextArrival);
-    
 
     //set all 5 of these vars in firebase
     database.ref().push({
@@ -77,8 +72,23 @@ $(document).ready(function () {
       nextArrival: nextArrival,
       minsAway: minsAway
     })
+
+    
+  })
   
+  //print all train schedule table data using firebase
+  database.ref().on("child_added", function (childSnapshot) {
+    $("tbody").append(
+      "<tr>" +
+      "<td>" + childSnapshot.val().name + "</td>" +
+      "<td>" + childSnapshot.val().destination + "</td>" +
+      "<td>" + childSnapshot.val().frequency + "</td>" +
+      "<td>" + childSnapshot.val().nextArrival + "</td>" +
+      "<td>" + childSnapshot.val().minsAway + "</td>" +
+      "</tr>"
+    )
 
-  })                                    
-
+  }, function (errorObject) {
+    console.log("Errors handled: " + errorObject.code);
+  });
 })
