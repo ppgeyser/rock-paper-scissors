@@ -42,7 +42,31 @@ $(document).ready(function () {
     console.log(firstTrainTime);
   
     //Use moment.js to calcuate train's next arrival and minutes away
-  
+    
+    // First Time Converted to MomentJS
+    var firstTrainMomentJS = moment(firstTrainTime, "HH:mm")
+    console.log(firstTrainMomentJS);
+
+    // Current Time
+    var currentTime = moment();
+    console.log("Time Right Now: " + moment(currentTime).format("hh:mm"));
+
+    // Difference between the times
+    var timeDiff = moment().diff(moment(firstTrainMomentJS), "minutes");
+    console.log("Time Difference: " + timeDiff);
+
+    // Time apart (remainder)
+    var remainder = timeDiff % frequency;
+    console.log("timeDiff % frequency: " + remainder);
+
+    // Minute Until Train
+    minsAway = frequency - remainder;
+    console.log("Minutes Away: " + minsAway);
+
+    // Next Train
+    nextArrival = moment().add(minsAway, "minutes");
+    console.log("Next arrival: " + moment(nextArrival).format("hh:mm"));
+
     //set all 5 of these vars in firebase
   
     //print all train schedule table data using firebase
