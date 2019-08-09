@@ -65,12 +65,20 @@ $(document).ready(function () {
 
     // Next Train
     nextArrival = moment().add(minsAway, "minutes");
-    console.log("Next arrival: " + moment(nextArrival).format("hh:mm"));
+    nextArrival = moment(nextArrival).format("h:mm a")
+    console.log("Next arrival: " + nextArrival);
+    
 
     //set all 5 of these vars in firebase
+    database.ref().push({
+      name: name,
+      destination: destination,
+      frequency: frequency,
+      nextArrival: nextArrival,
+      minsAway: minsAway
+    })
   
-    //print all train schedule table data using firebase
-  
-  })
+
+  })                                    
 
 })
