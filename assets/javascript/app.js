@@ -8,6 +8,7 @@ $(document).ready(function () {
     projectId: "train-schedule-840bf",
     storageBucket: "",
   };
+
   // Initialize Firebase
   firebase.initializeApp(firebaseConfig);
 
@@ -26,6 +27,8 @@ $(document).ready(function () {
 
     console.log("I've been clicked!");
 
+    $("tbody").empty();
+
     // grab values from each of the input fields
     name = $("#trainName").val().trim();
     destination = $("#trainDestination").val().trim();
@@ -37,58 +40,71 @@ $(document).ready(function () {
     console.log(frequency);
     console.log(firstTrainTime);
 
-    //Use moment.js to calcuate train's next arrival and minutes away
-
-    // First Time Converted to MomentJS
-    var firstTrainMomentJS = moment(firstTrainTime, "HH:mm").subtract(1, "years");
-    console.log(firstTrainMomentJS);
-
-    // Current Time
-    var currentTime = moment();
-    console.log("Time Right Now: " + moment(currentTime).format("hh:mm"));
-
-    // Difference between the times
-    var timeDiff = moment().diff(moment(firstTrainMomentJS), "minutes");
-    console.log("Time Difference: " + timeDiff);
-
-    // Time apart (remainder)
-    var remainder = timeDiff % frequency;
-    console.log("timeDiff % frequency: " + remainder);
-
-    // Minute Until Train
-    minsAway = frequency - remainder;
-    console.log("Minutes Away: " + minsAway);
-
-    // Next Train
-    nextArrival = moment().add(minsAway, "minutes");
-    nextArrival = moment(nextArrival).format("h:mm a")
-    console.log("Next arrival: " + nextArrival);
-
-    //set all 5 of these vars in firebase
+    //set all 4 of these vars in firebase
     database.ref().push({
       name: name,
       destination: destination,
       frequency: frequency,
-      nextArrival: nextArrival,
-      minsAway: minsAway
+      firstTrainTime: firstTrainTime
     })
 
-    
-  })
-  
-  //print all train schedule table data using firebase
-  database.ref().on("child_added", function (childSnapshot) {
+    $("#trainName").val("")
+    $("#trainDestination").val("")
+    $("#trainFrequency").val("")
+    $("#trainTime").val("")
+  });
+
+  updateSchedule();
+
+  //Set interval to 60 secs and run update schedule for all trains in firebase
+  function updateSchedule() {
+    setInterval(function () {
+
+      $("tbody").empty();
+
+      firebase.database().ref().on('value', function (snapshot) {
+        snapshot.forEach(function (childSnapshot) {
+          printSchedule(childSnapshot);
+        });
+      });
+
+    }, 1000);
+  }
+
+  //Pull from firebase and use momentjs to calculate next arrival and minutes away
+  function printSchedule(childSnapshot) {
+
+    //Use moment.js to calcuate train's next arrival and minutes away
+    firstTrainTime = childSnapshot.val().firstTrainTime
+
+    // First Time Converted to MomentJS
+    var firstTrainMomentJS = moment(firstTrainTime, "HH:mm").subtract(1, "years");
+
+    // Current Time
+    var currentTime = moment();
+
+    // Difference between the times
+    var timeDiff = moment().diff(moment(firstTrainMomentJS), "minutes");
+
+    // Time apart (remainder)
+    var remainder = timeDiff % childSnapshot.val().frequency;
+
+    // Minute Until Train
+    minsAway = childSnapshot.val().frequency - remainder;
+
+    // Next Train
+    nextArrival = moment().add(minsAway, "minutes");
+    nextArrival = moment(nextArrival).format("h:mm a")
+
     $("tbody").append(
       "<tr>" +
       "<td>" + childSnapshot.val().name + "</td>" +
       "<td>" + childSnapshot.val().destination + "</td>" +
       "<td>" + childSnapshot.val().frequency + "</td>" +
-      "<td>" + childSnapshot.val().nextArrival + "</td>" +
-      "<td>" + childSnapshot.val().minsAway + "</td>" +
+      "<td>" + nextArrival + "</td>" +
+      "<td>" + minsAway + "</td>" +
       "</tr>"
     )
+  }
 
-  }, function (errorObject) {
-    console.log("Errors handled: " + errorObject.code);
-  });
 })
